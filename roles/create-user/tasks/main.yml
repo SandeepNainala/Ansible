@@ -25,4 +25,4 @@
 
 - debug: var=ssh_key
   tags:
-    - create-user-display-keys
+    - create-user-display-key
