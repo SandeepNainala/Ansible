@@ -1,0 +1,49 @@
+---
+- name: Install and Configure MySQL on EC2
+  hosts: your_ec2_instance
+  become: true
+  vars:
+    mysql_root_password: your_root_password
+  tasks:
+    - name: Update APT cache (for ubuntu) or YUM (for centos)
+      become: true
+      apt:
+        update_cache: yes
+      when: ansible_os_family == 'Debian'
+      tags:
+        - update_cache
+
+    - name: Install MySQL Server
+      become: true
+      apt:
+        name: mysql-server
+        state: present
+      when: ansible_os_family == 'Debian'
+      tags:
+        - install_mysql
+
+    - name: Install MySQL server (for Centos)
+      become: true
+      yum:
+        name: mysql-server
+        state: present
+      when: ansible_os_family == 'RedHat'
+      tags:
+        - install_mysql
+
+    - name: Start MySQL Service
+      become: true
+      service:
+        name: mysql
+        state: started
+      tags:
+        - start_mysql
+
+    - name: Secure MySQL installation
+      mysql_user:
+        name: root
+        password: "{{ mysql_root_password }}"
+        hosts: localhost
+      tags:
+        - secure_mysql
+
